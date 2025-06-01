@@ -3,14 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>LocalStorage Master Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>LocalStorage Master Explorer</h1>
-  <button id="optionsBtn">Options</button>
-  <div id="domains"></div>
-  <button id="exportAll">Exporter tout en JSON</button>
-  <a id="download" style="display:none"></a>
+  <header>
+    <div id="storageSelector" class="segmented">
+      <button data-mode="localStorage" class="active">LocalStorage</button>
+      <button data-mode="sessionStorage">SessionStorage</button>
+      <button data-mode="indexedDB">IndexedDB</button>
+    </div>
+    <input type="text" id="filter" placeholder="Filtrer clé/valeur…" autocomplete="off">
+    <button id="themeBtn" title="Changer le thème"><span id="themeIcon">⚡</span> <span id="themeLabel" style="font-size:0.9em;margin-left:3px;"></span></button>
+  </header>
+  <main>
+    <div id="content"></div>
+  </main>
   <script src="index.js"></script>
 </body>
 </html>
