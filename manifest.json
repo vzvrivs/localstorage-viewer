@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "LocalStorage Master Explorer",
+  "version": "1.1",
+  "description": "Explorer, éditer et exporter le localStorage de tous les domaines ouverts.",
+  "permissions": ["storage", "tabs", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Ouvrir l'explorateur",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+    ,
+  "web_accessible_resources": [{
+    "resources": ["index.html", "style.css", "index.js"],
+    "matches": ["<all_urls>"]
+  }]
+}

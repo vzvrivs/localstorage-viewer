@@ -1,0 +1,67 @@
+body {
+  font-family: sans-serif;
+  margin: 40px;
+  background: #f6f6f6;
+  color: #222;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  margin-top: 2em;
+}
+
+table {
+  border-collapse: collapse;
+  background: #fff;
+  margin-top: 1em;
+  width: 100%;
+}
+
+th, td {
+  padding: 7px 10px;
+  border: 1px solid #eee;
+}
+
+th {
+  background: #f0f0f0;
+}
+
+td input.key, td input.value {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+td span {
+  margin-left: 6px;
+}
+
+button, input[type="button"] {
+  padding: 5px 12px;
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 3px;
+}
+
+input.key {
+  width: 30%;
+}
+
+input.value {
+  width: 65%;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.domain-section {
+  box-shadow: 0 1px 8px #ddd;
+  margin-bottom: 2em;
+  padding: 20px;
+  border-radius: 6px;
+}
