@@ -1,8 +1,4 @@
 :root {
-  --bg: #f6f6f6;
-  --fg: #222;
-  --border: #e0e0e0;
-  --panel: #fff;
   --accent: #0090ff;
   --danger: #f44;
   --muted: #888;
@@ -12,18 +8,12 @@ body[data-theme="dark"] {
   --fg: #f0f0f0;
   --border: #282a2b;
   --panel: #232425;
-  --accent: #65aaff;
-  --danger: #fa5757;
-  --muted: #aaa;
 }
 body[data-theme="light"] {
   --bg: #f6f6f6;
   --fg: #222;
   --border: #e0e0e0;
   --panel: #fff;
-  --accent: #0090ff;
-  --danger: #f44;
-  --muted: #888;
 }
 body {
   margin:0;padding:0;font-family:sans-serif;background:var(--bg);color:var(--fg);

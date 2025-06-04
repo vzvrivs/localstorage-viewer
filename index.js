@@ -259,10 +259,10 @@ function renderTabPanel(tab, data) {
   // Tableau des clés/valeurs
   const table = el('table', {style:'width:100%;'},
     el('thead', {}, el('tr', {},
-      el('th', {}, 'Clé'),
-      el('th', {}, 'Valeur'),
-      el('th', {}, 'Taille'),
-      el('th', {}, 'Actions')
+      el('th', {style:"width:17.5%"}, 'Clé'),
+      el('th', {style:"width:55%"}, 'Valeur'),
+      el('th', {style:"width:5%"}, 'Taille'),
+      el('th', {style:"width:22.5%"}, 'Actions')
     )),
     el('tbody', {},
       ...filtered.map(([k, v]) => renderSessionRow(tab, k, v))
@@ -478,10 +478,10 @@ function renderDomainPanel(domain, data, tabId) {
   // Tableau des clés/valeurs
   const table = el('table', {style:'width:100%;'},
     el('thead', {}, el('tr', {},
-      el('th', {}, 'Clé'),
-      el('th', {}, 'Valeur'),
-      el('th', {}, 'Taille'),
-      el('th', {}, 'Actions')
+      el('th', {style:"width:17.5%"}, 'Clé'),
+      el('th', {style:"width:55%"}, 'Valeur'),
+      el('th', {style:"width:5%"}, 'Taille'),
+      el('th', {style:"width:22.5%"}, 'Actions')
     )),
     el('tbody', {},
       ...filtered.map(([k, v]) => renderRow(domain, tabId, k, v))
@@ -907,10 +907,13 @@ function renderIDBStorePanel(store, base, domain, tabId) {
   }
 
   // Affiche les entrées (CRUD + Copier)
+  const n = keys.length;
+  const actionsWidth = 18.2;
+  const fieldWidth = (81.8 / n);
   const table = el('table', {style:'width:100%;margin-top:0.4em;'},
     el('thead', {}, el('tr', {},
-      ...keys.map(k => el('th', {}, k)),
-      el('th', {}, 'Actions')
+      ...keys.map(k => el('th', {style:`width:${fieldWidth}%`}, k)),
+      el('th', {style:`width:${actionsWidth}%`}, 'Actions')
     )),
     el('tbody', {},
       ...filtered.map(entry => renderIDBRow(entry, keys, store, base, domain, tabId))
@@ -923,7 +926,7 @@ function renderIDBStorePanel(store, base, domain, tabId) {
 function renderIDBRow(entry, keys, store, base, domain, tabId) {
   let pristine = {...entry};
   const inputs = {};
-  let saveBtn, copyKeyBtn, copyValueBtn, refreshBtn, copyTimeoutK, copyTimeoutV, refreshTimeout;
+  let saveBtn, copyBtn, refreshBtn, copyTimeoutV;
 
   function isDirty() {
     return keys.some(k => (inputs[k]?.value !== String(pristine[k] ?? '')));
@@ -933,10 +936,13 @@ function renderIDBRow(entry, keys, store, base, domain, tabId) {
     saveBtn.disabled = !isDirty();
   }
 
-  // Helper pour clé primaire
+  // Helper pour clé primaire réelle
   function idbPrimaryKey(store, obj) {
-    return store.keyPath || Object.keys(obj)[0];
+    if (store && store.keyPath && typeof store.keyPath === "string" && store.keyPath.length) return store.keyPath;
+    return undefined; // Pas de clé primaire détectée
   }
+  const pk = idbPrimaryKey(store, pristine);
+  const hasPrimaryKey = !!pk;
 
   // Une entrée = une ligne de table
   return el('tr', {},
@@ -959,59 +965,30 @@ function renderIDBRow(entry, keys, store, base, domain, tabId) {
           await idbUpdateEntry(domain, base, store, pristine, updated, tabId);
         }
       }, 'Enregistrer'),
-      copyKeyBtn = el('button', {
+      copyBtn = el('button', {
         onclick: async () => {
-          await copyToClipboard(inputs[keys[0]].value);
-          copyKeyBtn.textContent = "✓ Clé copiée";
-          copyKeyBtn.disabled = true;
-          clearTimeout(copyTimeoutK);
-          copyTimeoutK = setTimeout(() => {
-            copyKeyBtn.textContent = "Copier clé";
-            copyKeyBtn.disabled = false;
-          }, 3000);
-        }
-      }, 'Copier clé'),
-      copyValueBtn = el('button', {
-        onclick: async () => {
-          await copyToClipboard(inputs[keys[1]||keys[0]].value); // Prend le 2e champ si possible
-          copyValueBtn.textContent = "✓ Valeur copiée";
-          copyValueBtn.disabled = true;
+          let text, feedback, normal;
+          if (keys.length === 1) {
+            text = inputs[keys[0]].value;
+            feedback = "✓ Valeur copiée";
+            normal = "Copier valeur";
+          } else {
+            const obj = {};
+            keys.forEach(k => obj[k] = inputs[k].value);
+            text = JSON.stringify(obj, null, 2);
+            feedback = "✓ JSON copié";
+            normal = "Copier JSON";
+          }
+          await copyToClipboard(text);
+          copyBtn.textContent = feedback;
+          copyBtn.disabled = true;
           clearTimeout(copyTimeoutV);
           copyTimeoutV = setTimeout(() => {
-            copyValueBtn.textContent = "Copier valeur";
-            copyValueBtn.disabled = false;
+            copyBtn.textContent = normal;
+            copyBtn.disabled = false;
           }, 3000);
         }
-      }, 'Copier valeur'),
-      refreshBtn = el('button', {
-        onclick: async () => {
-          // Rafraîchit la valeur réelle depuis le store (par clé primaire)
-          const pk = idbPrimaryKey(store, pristine);
-          const pkValue = pristine[pk];
-          const updated = await runInTab(tabId, (dbName, storeName, pk, pkValue) => {
-            return new Promise(resolve => {
-              const req = indexedDB.open(dbName);
-              req.onsuccess = e => {
-                const db = e.target.result;
-                const tx = db.transaction(storeName, "readonly");
-                const s = tx.objectStore(storeName);
-                const getReq = s.get(pkValue);
-                getReq.onsuccess = () => resolve(getReq.result);
-                getReq.onerror = () => resolve(null);
-              };
-              req.onerror = () => resolve(null);
-            });
-          }, [base.name, store.name, pk, pkValue]);
-          if (updated) {
-            keys.forEach(k => inputs[k].value = String(updated[k] ?? ''));
-            Object.assign(pristine, updated);
-            updateSaveBtn();
-          } else {
-            refreshBtn.textContent = "Erreur";
-            setTimeout(() => { refreshBtn.textContent = "Refresh"; }, 1500);
-          }
-        }
-      }, 'Refresh'),
+      }, keys.length === 1 ? "Copier valeur" : "Copier JSON"),
       el('button', {
         onclick: async () => {
           if (confirm('Supprimer cette entrée ? Action irréversible.')) {
