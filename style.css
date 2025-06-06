@@ -18,14 +18,22 @@ body[data-theme="light"] {
 body {
   margin:0;padding:0;font-family:sans-serif;background:var(--bg);color:var(--fg);
   transition: background 0.2s, color 0.2s;
+  font-size: .9rem;
 }
 header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   gap: 1em;
   align-items: center;
   background: var(--panel);
   padding: 1em;
   border-bottom: 1px solid var(--border);
+}
+#extTitle {
+  margin-left: auto;
+  font-weight: 500;
 }
 main {
   padding: 1em 2vw;
@@ -62,3 +70,21 @@ input[type="text"] {
   color: var(--fg) !important;
 }
 td input[type="text"] { width: 100%; box-sizing: border-box; }
+/* ====== Styles pour mettre en évidence les sections filtrées ====== */
+.has-match {
+  border-left: 4px solid var(--accent);        /* barre colorée à gauche */
+  background-color: rgba(255, 250, 220, 0.3);   /* fond jaune clair très pâle */
+}
+.has-match h2 {
+  color: var(--accent);                        /* titre en couleur accentuée */
+}
+/* Optionnel : petit badge numérique */
+.badge {
+  background-color: var(--accent);
+  color: white;
+  border-radius: 2px;
+  font-size: 0.85em;
+  padding: 0 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}

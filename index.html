@@ -9,15 +9,21 @@
 <body>
   <header>
     <div id="storageSelector" class="segmented">
-      <button data-mode="localStorage" class="active">LocalStorage</button>
-      <button data-mode="sessionStorage">SessionStorage</button>
-      <button data-mode="indexedDB">IndexedDB</button>
+      <button type="button" data-mode="localStorage">LocalStorage (0)</button>
+      <button type="button" data-mode="sessionStorage">SessionStorage (0)</button>
+      <button type="button" data-mode="indexedDB">IndexedDB (0)</button>
     </div>
     <input type="text" id="filter" placeholder="Filtrer clé/valeur…" autocomplete="off">
-    <button id="themeBtn" title="Changer le thème"><span id="themeIcon">⚡</span> <span id="themeLabel" style="font-size:0.9em;margin-left:3px;"></span></button>
+    <button type="button" id="themeBtn" title="Changer le thème">
+      <span id="themeIcon">⚡</span>
+      <span id="themeLabel" style="font-size:0.9em;margin-left:3px;"></span>
+    </button>
+    <span id="extTitle">Storage Master Explorer</span>
   </header>
   <main>
     <div id="content"></div>
+    <!-- Cet élément contiendra un message d’erreur pour Local/Session/IndexedDB -->
+    <div id="errorMessage" style="display:none;"></div>
   </main>
   <script src="index.js"></script>
 </body>
